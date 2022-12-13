@@ -21,7 +21,7 @@ class Course {
 class Subject {
     - String name
     - Course[4] courses
-    + Subject()
+    + Subject(String name)
     + String getName()
     + Course getCourses()
     + int getTotalStudentsLosing()
