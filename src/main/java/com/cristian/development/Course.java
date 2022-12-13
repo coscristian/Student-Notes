@@ -31,9 +31,19 @@ public class Course {
      * Add a new student to the course
      * @param newStudent
      * @return void
+     * @throws Exception You can't assign more students to this course.
      */
-    public void addStudent(Student newStudent) {
-         
+    public void addStudent(Student newStudent) throws Exception{
+        
+        int totalStudents = 0;
+        for (Student student : students) {
+            if (student != null) totalStudents++;
+        }
+
+        if (totalStudents < 25)
+            students[totalStudents] = newStudent;
+        else 
+            throw new Exception("You can't assign more students to this course.");
     }
 
     /**
@@ -42,6 +52,9 @@ public class Course {
      * @see float
      */
     public float getCourseGradeAverage() {
+        // TODO: Obtain total of students to get the average of notes
+
+
         return 1f;
     }
 }
