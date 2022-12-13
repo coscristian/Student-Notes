@@ -1,6 +1,43 @@
-@startuml StudentNotes
+@startuml StudentGrades
 
+class Student{
+    - String id
+    - float grade
+    + Student()
+    + String getId() 
+    + void setGrade(float newGrade)
+    + float getGrade()
+}
 
+class Course {
+    - Student[25] students
+    - Subject subject
+    + Course()
+    + Subject getSubject()
+    + void addStudent(Student newStudent)
+    + float getCourseGradeAverage()
+}
 
+class Subject {
+    - String name
+    - Course[4] courses
+    + Subject()
+    + String getName()
+    + Course getCourses()
+    + int getTotalStudentsLosing()
+    + int getTotalStudentsPassing()
+    + int getTotalStudentsRegistered()
+}
+
+class AppNotes {
+    - Subject[30] subjects
+    + AppNotes()
+    + void showMenu()
+    + main(String args)
+}
+
+Student *-- Course
+Course *-- Subject
+AppNotes --> Subject
 
 @enduml
