@@ -28,17 +28,35 @@ public class Course {
     }
 
     /**
+     * This method obtains the students of the corresponding course 
+     * @return Students of the course
+     * @see Student[]
+     */
+    public Student[] getStudents() {
+        return this.students;
+    }
+
+    /**
+     * This method obtains the total amount of students of the course 
+     * @return Total amount of students of the course
+     * @see int
+     */
+    public int getTotalStudents() {
+        int totalStudents = 0;
+        for (Student student : students) {
+            if (student != null) totalStudents++;
+        }
+        return totalStudents;
+    }
+
+    /**
      * Add a new student to the course
      * @param newStudent
      * @return void
      * @throws Exception You can't assign more students to this course.
      */
     public void addStudent(Student newStudent) throws Exception{
-        
-        int totalStudents = 0;
-        for (Student student : students) {
-            if (student != null) totalStudents++;
-        }
+        int totalStudents = getTotalStudents();
 
         if (totalStudents < 25)
             students[totalStudents] = newStudent;
@@ -52,9 +70,15 @@ public class Course {
      * @see float
      */
     public float getCourseGradeAverage() {
-        // TODO: Obtain total of students to get the average of notes
+        int totalStudents = 0;
+        float gradeSum = 0f;
 
-
-        return 1f;
+        for (Student student : students) {
+            if (student != null){
+                gradeSum += student.getGrade();
+                totalStudents++;
+            }                    
+        }
+        return gradeSum / totalStudents;
     }
 }

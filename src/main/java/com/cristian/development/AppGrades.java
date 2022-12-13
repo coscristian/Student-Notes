@@ -9,7 +9,6 @@ public class AppGrades {
     private final static int MAIN_MENU_FIRST_LIMIT = 1;
     private final static int MAIN_MENU_SECOND_LIMIT = 4;
 
-
     public AppGrades() {
         this.subjects = new Subject[30];
         this.sc = new Scanner(System.in);

@@ -46,7 +46,13 @@ public class Subject {
      * @see int
      */
     public int getTotalStudentsLosing() {
-        return 1;
+        int totalStudentsLosing = 0;
+        for (Course course : this.courses) {
+            for (Student student : course.getStudents()) {
+                if (student.getGrade() < 3.0) totalStudentsLosing++;
+            }
+        }
+        return totalStudentsLosing;
     }
 
     /**
@@ -55,7 +61,13 @@ public class Subject {
      * @see int
      */
     public int getTotalStudentsPassing() {
-        return 1;
+        int totalStudentsPassing = 0;
+        for (Course course : this.courses) {
+            for (Student student : course.getStudents()) {
+                if (student.getGrade() > 3.0) totalStudentsPassing++;
+            }
+        }
+        return totalStudentsPassing;
     }
 
     /**
@@ -64,7 +76,11 @@ public class Subject {
      * @see int
      */
     public int getTotalStudentsRegistered() {
-        return 1;
+        int totalStudents = 0;
+        for (Course course : this.courses) {
+            totalStudents += course.getTotalStudents();
+        }
+        return totalStudents;
     }
 
 }
