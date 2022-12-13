@@ -1,4 +1,4 @@
-package com.cristian.development;
+package com.cristian.development.model;
 
 /**
  * This class generates all the courses which are part of the corresponding subject and it has the average grade of every course

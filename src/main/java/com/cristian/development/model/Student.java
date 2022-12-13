@@ -1,4 +1,4 @@
-package com.cristian.development;
+package com.cristian.development.model;
 
 /**
  * This class generates a student who will matriculate a course

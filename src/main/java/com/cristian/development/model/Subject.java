@@ -1,4 +1,4 @@
-package com.cristian.development;
+package com.cristian.development.model;
 
 /**
  * This class generates a subject and count the total amount of students losing and passing the subject, count the total amount of students registered by subject 
