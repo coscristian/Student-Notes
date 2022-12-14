@@ -12,14 +12,48 @@ public class GradesController {
     private Subject[] subjects;
     
     private final static int MAIN_MENU_FIRST_LIMIT = 1;
-    private final static int MAIN_MENU_SECOND_LIMIT = 4;
+    private final static int MAIN_MENU_SECOND_LIMIT = 3;
 
     public GradesController() {
         this.subjects = new Subject[30];
         this.view = new GradesView();
     }
 
-    public void manageStudents(Scanner sc)  {
+    private void validateName(String name) throws Exception{
+        name = name.replaceAll(" ", "");
+        for(int i = 0; i < name.length(); i++) {
+            char letter = name.charAt(i);
+            if(!Character.isLetter(letter))
+                throw new Exception("Invalid name");
+        }
+    }
+
+    public int getTotalSubjects() {
+        int totalsubjects = 0;
+        for (Subject subject : subjects) {
+            if (subject != null) totalsubjects++;
+        }
+        return totalsubjects;
+    }
+
+    public void createSubject(Scanner sc) {
+        boolean invalidName = true;
+        do {
+            try {
+                
+                String name = view.readString("Please, enter the name of the subject: ", sc);   
+                validateName(name);
+                invalidName = false;
+
+                subjects[getTotalSubjects()] = new Subject(name);
+
+            } catch (Exception e) {
+                view.showError(e);
+            }
+        }while(invalidName);
+    }
+
+    public void manageSubjects(Scanner sc)  {
 
         final int FIRST_OPTION = 0;
         final int LAST_OPTION = 2;
@@ -27,15 +61,15 @@ public class GradesController {
 
         do {
             try {
-                option = view.showSubMenuManageStudents(sc);
+                option = view.showSubMenuManageSubjects(sc);
                 switch (option) {
-                    case 0:
-                        
-                        break;
                     case 1:
-                        
+                        createSubject(sc);
                         break;
                     case 2:
+                        // TODO: Delete student from subject
+                        break;
+                    case 3:
                         break;
                     default:
 
@@ -56,7 +90,7 @@ public class GradesController {
                 option = view.showMenu(sc);
                 switch (option) {
                     case 1:
-                        manageStudents(sc);
+                        manageSubjects(sc);
                         break;
                     case 2:
 
