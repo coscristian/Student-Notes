@@ -36,6 +36,14 @@ public class GradesController {
         return totalsubjects;
     }
 
+    public int getTotalCourses() {
+        int totalsubjects = 0;
+        for (Subject subject : subjects) {
+            if (subject != null) totalsubjects++;
+        }
+        return totalsubjects;
+    }
+
     public void createSubject(Scanner sc) {
         boolean invalidName = true;
         do {
@@ -81,6 +89,50 @@ public class GradesController {
         } while (option < FIRST_OPTION || option > LAST_OPTION);
     }
 
+    private void createCourse(Scanner sc) {
+        // TODO: listar materias para que el usuario seleccione la materia en la que desea matricular el curso.        
+        boolean invalidName = true;
+        do {
+            try {
+                
+                
+                String name = view.readString("Please, enter the name of the course: ", sc);   
+                validateName(name);
+                invalidName = false;
+
+                subjects[getTotalCourses()] = new Subject(name);
+
+            } catch (Exception e) {
+                view.showError(e);
+            }
+        }while(invalidName);
+    }
+
+    private void manageCourses(Scanner sc) {
+        final int FIRST_OPTION = 0;
+        final int LAST_OPTION = 2;
+        int option = 0;
+
+        do {
+            try {
+                option = view.showSubMenuManageCourses(sc);
+                switch (option) {
+                    case 1:
+                        createCourse(sc);
+                        break;
+                    case 2:
+                        
+                        break;
+                    default:
+
+                        break;
+                }
+            } catch (Exception e) {
+                view.showError(e);
+            }
+        } while (option < FIRST_OPTION || option > LAST_OPTION);
+    }
+
     public void startSystem(Scanner sc) {
 
         int option = 0;
@@ -93,7 +145,7 @@ public class GradesController {
                         manageSubjects(sc);
                         break;
                     case 2:
-
+                        manageCourses(sc);
                         break;
                     case 3:
 
@@ -109,5 +161,7 @@ public class GradesController {
             view.showError(e);
         }
     }
+
+
 
 }

@@ -42,4 +42,17 @@ public class GradesView {
         return sc.nextLine();
     }
 
+    public int showSubMenuManageCourses(Scanner sc) {
+        System.out.println();
+        System.out.println(".:\tSUBMENU -> MANAGE COURSES\t:.");
+        System.out.println("1. Create Course");
+        System.out.println("2. Delete Course");
+
+        System.out.printf("Please, select an option: ");
+        int option =  sc.nextInt();
+        sc.nextLine();
+
+        return option;
+    }
+
 }
