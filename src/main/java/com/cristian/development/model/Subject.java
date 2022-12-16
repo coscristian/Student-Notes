@@ -31,6 +31,10 @@ public class Subject {
         return this.name;
     }
 
+    public void setCourses(Course[] courses) {
+        this.courses = courses;
+    }
+
     /**
      * Obtain the courses of the subject
      * @return Courses of the corresponding subject
@@ -38,6 +42,33 @@ public class Subject {
      */
     public Course[] getCourses() {
         return this.courses;
+    }
+
+    /**
+     * Obtain the total amount of courses of the corresponding subject
+     * @return Total courses
+     * @see int
+     */
+    public int getTotalAmountCourses() {
+        int cont = 0;
+        for (Course course : courses) {
+            if (course != null) cont++;
+        }
+        return cont;
+    }
+
+    /**
+     * Add a course to the subject
+     * @param newCourse
+     * @see Course
+     * @throws Exception
+     */
+    public void addCourse(Course course) throws Exception{
+        int totalCourses = getTotalAmountCourses();
+        if (totalCourses < 4)
+            this.courses[totalCourses] = course;
+        else
+            throw new Exception("This subject is full of courses!! You can only add 4 courses to a subject");
     }
 
     /**

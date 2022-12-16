@@ -2,44 +2,42 @@ package com.cristian.development.controller;
 
 import java.util.Scanner;
 
+import com.cristian.development.model.Course;
 import com.cristian.development.model.Subject;
 import com.cristian.development.view.GradesView;
 
 public class GradesController {
+    private final int EXIT = 0;
 
     private GradesView view;
 
     private Subject[] subjects;
-    
-    private final static int MAIN_MENU_FIRST_LIMIT = 1;
-    private final static int MAIN_MENU_SECOND_LIMIT = 3;
 
     public GradesController() {
         this.subjects = new Subject[30];
         this.view = new GradesView();
     }
 
-    private void validateName(String name) throws Exception{
+    private void validateName(String name) throws Exception {
         name = name.replaceAll(" ", "");
-        for(int i = 0; i < name.length(); i++) {
+        for (int i = 0; i < name.length(); i++) {
             char letter = name.charAt(i);
-            if(!Character.isLetter(letter))
+            if (!Character.isLetter(letter))
                 throw new Exception("Invalid name");
         }
     }
 
     public int getTotalSubjects() {
         int totalsubjects = 0;
-        for (Subject subject : subjects) {
-            if (subject != null) totalsubjects++;
-        }
+        for (Subject subject : subjects) if (subject != null) totalsubjects++;
         return totalsubjects;
     }
 
     public int getTotalCourses() {
         int totalsubjects = 0;
         for (Subject subject : subjects) {
-            if (subject != null) totalsubjects++;
+            if (subject != null)
+                totalsubjects++;
         }
         return totalsubjects;
     }
@@ -48,8 +46,8 @@ public class GradesController {
         boolean invalidName = true;
         do {
             try {
-                
-                String name = view.readString("Please, enter the name of the subject: ", sc);   
+
+                String name = view.readString("Please, enter the name of the subject: ", sc);
                 validateName(name);
                 invalidName = false;
 
@@ -58,10 +56,10 @@ public class GradesController {
             } catch (Exception e) {
                 view.showError(e);
             }
-        }while(invalidName);
+        } while (invalidName);
     }
 
-    public void manageSubjects(Scanner sc)  {
+    public void manageSubjects(Scanner sc) {
 
         final int FIRST_OPTION = 0;
         final int LAST_OPTION = 2;
@@ -71,6 +69,8 @@ public class GradesController {
             try {
                 option = view.showSubMenuManageSubjects(sc);
                 switch (option) {
+                    case 0:
+                        view.showTitle("Going back to the Main Menu"); break;
                     case 1:
                         createSubject(sc);
                         break;
@@ -80,8 +80,7 @@ public class GradesController {
                     case 3:
                         break;
                     default:
-
-                        break;
+                        view.showTitle("Please, select a correct option."); break;
                 }
             } catch (Exception e) {
                 view.showError(e);
@@ -90,22 +89,85 @@ public class GradesController {
     }
 
     private void createCourse(Scanner sc) {
-        // TODO: listar materias para que el usuario seleccione la materia en la que desea matricular el curso.        
-        boolean invalidName = true;
+        int option = 0;
+        final int FIRST_OPTION = 1;
+        final int LAST_OPTION = getTotalSubjects();
+        final int EXIT = 0;
         do {
             try {
-                
-                
-                String name = view.readString("Please, enter the name of the course: ", sc);   
-                validateName(name);
-                invalidName = false;
+                if (getTotalSubjects() == 0)
+                    throw new Exception("There are no registered subjects");
+        
+                option = view.showSubMenuSubjects(subjects, sc);
+                if (option < FIRST_OPTION || option > LAST_OPTION)
+                    throw new Exception("Please, select a correct option!!");
 
-                subjects[getTotalCourses()] = new Subject(name);
+                Subject selectedSubject = subjects[option - 1];
+                selectedSubject.addCourse(new Course());
+                option = 0;
 
             } catch (Exception e) {
+                option = 0;
                 view.showError(e);
             }
-        }while(invalidName);
+        } while (option != EXIT);
+    }
+
+    private int selectCourse(Scanner sc, Subject selectedSubject) {
+        final int FIRST_OPTION = 0;
+        final int LAST_OPTION = selectedSubject.getTotalAmountCourses();
+        int idCourse = 0;
+        int option = 0;
+        do {
+            try {
+                option = view.showSubMenuAvailableCourses(sc, selectedSubject);
+                if (option < FIRST_OPTION || option > LAST_OPTION)
+                    throw new Exception("Please, select a correct option!!");
+                
+                idCourse = option;
+                option = 0;
+            } catch (Exception e) {
+                option = 0;
+                view.showError(e);
+            }    
+        } while (option != EXIT);
+        return idCourse - 1;
+    }
+
+    private void deleteCourse(Scanner sc) {
+        int option = 0;
+        final int FIRST_OPTION = 1;
+        final int LAST_OPTION = getTotalSubjects();
+        
+        do {
+            try {
+                if (getTotalSubjects() == 0)
+                    throw new Exception("There are no registered subjects");
+        
+                option = view.showSubMenuSubjects(subjects, sc);
+                if (option < FIRST_OPTION || option > LAST_OPTION)
+                    throw new Exception("Please, select a correct option!!");
+
+                Subject selectedSubject = subjects[option - 1];
+                if (selectedSubject.getTotalAmountCourses() == 0)
+                    throw new Exception("This subject doesn't have courses!!");
+
+                int courseIdToDelete = selectCourse(sc, selectedSubject);
+                
+                Course[] updatedCourses = new Course[4];
+                for (int i = 0, k = 0; i < selectedSubject.getTotalAmountCourses(); i++) {
+                    if(i != courseIdToDelete) {
+                        updatedCourses[k] = selectedSubject.getCourses()[i];
+                        k++;
+                    }   
+                }
+                selectedSubject.setCourses(updatedCourses);
+                option = 0;
+            } catch (Exception e) {
+                option = 0;
+                view.showError(e);
+            }
+        } while (option != EXIT);
     }
 
     private void manageCourses(Scanner sc) {
@@ -117,15 +179,14 @@ public class GradesController {
             try {
                 option = view.showSubMenuManageCourses(sc);
                 switch (option) {
+                    case 0:
+                        view.showTitle("Going to the Main Menu."); break;                      
                     case 1:
-                        createCourse(sc);
-                        break;
+                        createCourse(sc); break;                        
                     case 2:
-                        
-                        break;
+                        deleteCourse(sc); break;
                     default:
-
-                        break;
+                        view.showTitle("Please, select a correct option."); break;
                 }
             } catch (Exception e) {
                 view.showError(e);
@@ -133,12 +194,45 @@ public class GradesController {
         } while (option < FIRST_OPTION || option > LAST_OPTION);
     }
 
+    private void generateAverageEveryCourse() throws Exception {
+
+        if (getTotalSubjects() == 0)
+            throw new Exception("There are no registered subjects");
+
+        for (Subject subject : subjects) {
+            if (subject.getCourses()[0] == null)
+                throw new Exception("In this subject there are no courses");
+
+            view.showTitle("Subject ->" + subject.getName() + "\n");
+            for (Course course : subject.getCourses()) {
+                int totalStudents = course.getTotalStudents();
+                if (totalStudents == 0)
+                    throw new Exception("In this course there are no students");
+                float acum = 0;
+                int courseId = 1;
+                for (int i = 0; i < course.getTotalStudents(); i++)
+                    acum += course.getStudents()[i].getGrade();
+
+                view.showAverage(courseId, acum / course.getTotalStudents());
+                courseId++;
+            }
+        }
+    }
+
+    private void generateReports(Scanner sc) throws Exception {
+        generateAverageEveryCourse();
+    }
+
+    private void createStudent(Scanner sc) {
+        // TODO: Create a student and assign the student to a course
+    }
+
     public void startSystem(Scanner sc) {
 
         int option = 0;
 
-        try {
-            do {
+        do {
+            try {
                 option = view.showMenu(sc);
                 switch (option) {
                     case 1:
@@ -148,20 +242,18 @@ public class GradesController {
                         manageCourses(sc);
                         break;
                     case 3:
-
+                        generateReports(sc);
                         break;
                     case 4:
-
+                        createStudent(sc);
                         break;
                     default:
+                        view.showError(new Exception("Please select a valid option"));
                         break;
                 }
-            } while (option < MAIN_MENU_FIRST_LIMIT || option > MAIN_MENU_SECOND_LIMIT);            
-        } catch (Exception e) {
-            view.showError(e);
-        }
+            } catch (Exception e) {
+                view.showError(e);
+            }
+        } while (option != 0);
     }
-
-
-
 }
