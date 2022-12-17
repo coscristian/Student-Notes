@@ -3,8 +3,10 @@ package com.cristian.development.controller;
 import java.util.Scanner;
 
 import com.cristian.development.model.Course;
+import com.cristian.development.model.Student;
 import com.cristian.development.model.Subject;
 import com.cristian.development.view.GradesView;
+import com.cristian.development.exception.*;
 
 public class GradesController {
     private final int EXIT = 0;
@@ -15,7 +17,7 @@ public class GradesController {
 
     public GradesController() {
         this.subjects = new Subject[30];
-        this.view = new GradesView();
+        this.view = new GradesView(this);
     }
 
     private void validateName(String name) throws Exception {
@@ -114,16 +116,12 @@ public class GradesController {
     }
 
     private int selectCourse(Scanner sc, Subject selectedSubject) {
-        final int FIRST_OPTION = 0;
-        final int LAST_OPTION = selectedSubject.getTotalAmountCourses();
         int idCourse = 0;
         int option = 0;
         do {
             try {
                 option = view.showSubMenuAvailableCourses(sc, selectedSubject);
-                if (option < FIRST_OPTION || option > LAST_OPTION)
-                    throw new Exception("Please, select a correct option!!");
-                
+
                 idCourse = option;
                 option = 0;
             } catch (Exception e) {
@@ -136,17 +134,10 @@ public class GradesController {
 
     private void deleteCourse(Scanner sc) {
         int option = 0;
-        final int FIRST_OPTION = 1;
-        final int LAST_OPTION = getTotalSubjects();
         
         do {
-            try {
-                if (getTotalSubjects() == 0)
-                    throw new Exception("There are no registered subjects");
-        
+            try {        
                 option = view.showSubMenuSubjects(subjects, sc);
-                if (option < FIRST_OPTION || option > LAST_OPTION)
-                    throw new Exception("Please, select a correct option!!");
 
                 Subject selectedSubject = subjects[option - 1];
                 if (selectedSubject.getTotalAmountCourses() == 0)
@@ -223,8 +214,34 @@ public class GradesController {
         generateAverageEveryCourse();
     }
 
-    private void createStudent(Scanner sc) {
-        // TODO: Create a student and assign the student to a course
+    private void createStudent(Scanner sc) throws Exception{
+        
+        String name = view.readString("Please, enter the name of the student: ", sc);
+        validateName(name);
+        float studentGrade = view.readFloat("Plase, enter the grade of the student: ", sc);
+        
+        if (studentGrade >= 0.0 && studentGrade <= 5.0) {
+            Student student = new Student(name, studentGrade);
+            int option = 0;
+            do {
+                try {
+                    int subjectId = view.showSubMenuSubjects(subjects, sc); 
+                    Subject selectedSubject = subjects[subjectId - 1];
+    
+                    int courseId = selectCourse(sc, selectedSubject);
+                    selectedSubject.getCourses()[courseId].addStudent(student);   
+                    option = 0;                 
+                }catch (NoRegisteredSubjectsException e) {
+                    view.showError(e);
+                }
+                catch (Exception e) {
+                    option = 1;
+                    view.showError(e);
+                }
+            }while(option != EXIT);
+        }else {
+            throw new Exception("Invalid Grade !!");
+        }
     }
 
     public void startSystem(Scanner sc) {

@@ -1,9 +1,18 @@
 package com.cristian.development.view;
 
 import java.util.Scanner;
+
+import com.cristian.development.controller.GradesController;
 import com.cristian.development.model.Subject;
+import com.cristian.development.exception.*;
 
 public class GradesView {
+
+    GradesController controller;
+
+    public GradesView(GradesController controller) {
+        this.controller = controller;
+    }
     
     public int showMenu(Scanner sc) {
 
@@ -18,7 +27,10 @@ public class GradesView {
         System.out.println();
         
         System.out.printf("Please, select an option: ");
-        return sc.nextInt();
+        int option = sc.nextInt();
+        sc.nextLine();
+
+        return option;
     }
 
     public int showSubMenuManageSubjects(Scanner sc) {
@@ -35,12 +47,28 @@ public class GradesView {
     }
 
     public void showError(Exception e) {
-        System.out.printf("ERROR: %s \n", e.toString());
+        System.out.printf("ERROR: %s \n", e.getMessage());
     }
 
     public String readString(String message, Scanner sc) {
         System.out.printf(message);
         return sc.nextLine();
+    }
+
+    public float readFloat(String message, Scanner sc) {
+        System.out.printf(message);
+        float value = sc.nextFloat();
+        sc.nextLine();
+
+        return value;
+    }
+
+    public int readInt(String message, Scanner sc) {
+        System.out.printf(message);
+        int option = sc.nextInt();
+        sc.nextLine();
+
+        return option;
     }
 
     public int showSubMenuManageCourses(Scanner sc) {
@@ -65,34 +93,43 @@ public class GradesView {
         System.out.printf("\tAverage grade of Course \n %.2f", courseId, average);
     }
 
-    public int showSubMenuSubjects(Subject[] subjects, Scanner sc) {
-        int option = 1;
+    public int showSubMenuSubjects(Subject[] subjects, Scanner sc) throws Exception{
+        final int FIRST_OPTION = 1;
+        final int TOTAL_SUBJECTS = controller.getTotalSubjects();
+        int count = 1;
+
+        if (TOTAL_SUBJECTS == 0)
+            throw new NoRegisteredSubjectsException("There are no registered subjects");
+
         System.out.println(".:\tSUBMENU -> AVAILABLE SUBJECTS\t:.");
         for (Subject subject : subjects) {
             if (subject != null) {
-                showTitle(option + ". " + subject.getName() + "\n");
-                option++;                
+                showTitle(count + ". " + subject.getName() + "\n");
+                count++;                
             }
         }
-        System.out.printf("\nPlease, select an option: ");
-        option = sc.nextInt();
-        sc.nextLine();
+
+        int option = readInt("\nPlease, select an option: ", sc);
+
+        if (option < FIRST_OPTION || option > TOTAL_SUBJECTS)
+            throw new Exception("Please, select a correct option!!");
 
         return option;
     }
 
-    public int showSubMenuAvailableCourses(Scanner sc, Subject selectedSubject) {
-        int option = 1;
+    public int showSubMenuAvailableCourses(Scanner sc, Subject selectedSubject) throws Exception {
+        final int FIRST_OPTION = 0;
+        final int LAST_OPTION = selectedSubject.getTotalAmountCourses();
+
         System.out.println(".:\tSUBMENU -> AVAILABLE COURSES\t:.");
         for (int i = 0; i < selectedSubject.getTotalAmountCourses(); i++) {
             showTitle((i+1) + ". Course " + (i+1) + "\n");
         }
-        System.out.printf("0. Go back");
-        System.out.printf("\nPlease, select an option: ");
-        option = sc.nextInt();
-        sc.nextLine();
+        showTitle("0. Go back");
+        int option = readInt("\nPlease, select an option: ", sc);
 
+        if (option < FIRST_OPTION || option > LAST_OPTION)
+            throw new Exception("Please, select a correct option!!");
         return option; 
     }
-
 }
