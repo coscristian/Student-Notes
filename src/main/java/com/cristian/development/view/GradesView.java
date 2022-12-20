@@ -46,8 +46,8 @@ public class GradesView {
         return option;
     }
 
-    public void showError(Exception e) {
-        System.out.printf("ERROR: %s \n", e.getMessage());
+    public void showError(Exception e, String message) {
+        System.out.printf("%s: %s \n", message, e.getMessage());
     }
 
     public String readString(String message, Scanner sc) {
@@ -90,7 +90,7 @@ public class GradesView {
     }
 
     public void showAverage(int courseId, float average) {
-        System.out.printf("\tAverage grade of Course \n %.2f", courseId, average);
+        System.out.printf("\tAverage grade of Course %d -> %.2f \n", courseId, average);
     }
 
     public int showSubMenuSubjects(Subject[] subjects, Scanner sc) throws Exception{

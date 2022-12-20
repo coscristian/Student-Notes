@@ -56,7 +56,7 @@ public class GradesController {
                 subjects[getTotalSubjects()] = new Subject(name);
 
             } catch (Exception e) {
-                view.showError(e);
+                view.showError(e,"ERROR");
             }
         } while (invalidName);
     }
@@ -85,7 +85,7 @@ public class GradesController {
                         view.showTitle("Please, select a correct option."); break;
                 }
             } catch (Exception e) {
-                view.showError(e);
+                view.showError(e,"ERROR");
             }
         } while (option < FIRST_OPTION || option > LAST_OPTION);
     }
@@ -110,7 +110,7 @@ public class GradesController {
 
             } catch (Exception e) {
                 option = 0;
-                view.showError(e);
+                view.showError(e,"ERROR");
             }
         } while (option != EXIT);
     }
@@ -126,7 +126,7 @@ public class GradesController {
                 option = 0;
             } catch (Exception e) {
                 option = 0;
-                view.showError(e);
+                view.showError(e,"ERROR");
             }    
         } while (option != EXIT);
         return idCourse - 1;
@@ -156,7 +156,7 @@ public class GradesController {
                 option = 0;
             } catch (Exception e) {
                 option = 0;
-                view.showError(e);
+                view.showError(e,"ERROR");
             }
         } while (option != EXIT);
     }
@@ -180,7 +180,7 @@ public class GradesController {
                         view.showTitle("Please, select a correct option."); break;
                 }
             } catch (Exception e) {
-                view.showError(e);
+                view.showError(e,"ERROR");
             }
         } while (option < FIRST_OPTION || option > LAST_OPTION);
     }
@@ -195,12 +195,14 @@ public class GradesController {
                 throw new Exception("In this subject there are no courses");
 
             view.showTitle("Subject ->" + subject.getName() + "\n");
+            int courseId = 1;
             for (Course course : subject.getCourses()) {
                 int totalStudents = course.getTotalStudents();
                 if (totalStudents == 0)
-                    throw new Exception("In this course there are no students");
+                    view.showTitle("\tCourse " + courseId + " there are no students.");
+                    //throw new NoStudentsException("Course " + courseId + " -> in this course there are no students");
+                
                 float acum = 0;
-                int courseId = 1;
                 for (int i = 0; i < course.getTotalStudents(); i++)
                     acum += course.getStudents()[i].getGrade();
 
@@ -232,11 +234,11 @@ public class GradesController {
                     selectedSubject.getCourses()[courseId].addStudent(student);   
                     option = 0;                 
                 }catch (NoRegisteredSubjectsException e) {
-                    view.showError(e);
+                    view.showError(e,"ERROR");
                 }
                 catch (Exception e) {
                     option = 1;
-                    view.showError(e);
+                    view.showError(e,"ERROR");
                 }
             }while(option != EXIT);
         }else {
@@ -265,11 +267,14 @@ public class GradesController {
                         createStudent(sc);
                         break;
                     default:
-                        view.showError(new Exception("Please select a valid option"));
+                        view.showError(new Exception("Please select a valid option"), "ERROR");
                         break;
                 }
-            } catch (Exception e) {
-                view.showError(e);
+            }catch (NoStudentsException e) {
+                view.showError(e, "\t");
+            }
+            catch (Exception e) {
+                view.showError(e, "ERROR");
             }
         } while (option != 0);
     }
